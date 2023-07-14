@@ -71,8 +71,18 @@ class FaceRecognition:
 
                     best_match_index = np.argmin(face_distances)
                     if matches[best_match_index]:
-                        name = self.known_face_names[best_match_index]
+                        name = self.known_face_names[best_match_index].split(".")[0]
                         confidence = face_confidence(face_distances[best_match_index])
+                        
+                        if float(confidence.split('%')[0]) < 55:
+                            name = "Unknown"
+                            confidence = '???'
+
+                        elif float(confidence.split('%')[0]) < 65:
+                            name = "Not sure"
+                            confidence = 'Improve the lighting'
+                        else:
+                            pass
 
                     self.face_names.append(f'{name} ({confidence})')
 
@@ -92,7 +102,7 @@ class FaceRecognition:
                 cv2.putText(frame, name, (left + 6, bottom - 6), cv2.FONT_HERSHEY_DUPLEX, 0.8, (255, 255, 255), 1)
 
             # Display the resulting image
-            small_frame = cv2.resize(frame, (0, 0), fx=0.5, fy=0.5)
+            small_frame = cv2.resize(frame, (0, 0), fx=0.6, fy=0.6)
 
             cv2.imshow('Face Recognition', small_frame)
 
