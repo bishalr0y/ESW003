@@ -3,6 +3,7 @@ import os, sys
 import cv2
 import numpy as np
 import math
+import re
 
 
 # Helper
@@ -30,6 +31,7 @@ class FaceRecognition:
 
     def encode_faces(self):
         for image in os.listdir('faces'):
+            print(image)
             face_image = face_recognition.load_image_file(f"faces/{image}")
             face_encoding = face_recognition.face_encodings(face_image, num_jitters=1)[0]
 
@@ -72,6 +74,8 @@ class FaceRecognition:
                     best_match_index = np.argmin(face_distances)
                     if matches[best_match_index]:
                         name = self.known_face_names[best_match_index].split(".")[0]
+                        # Getting rid of the suffix number if there is more than one pic of 1 user
+                        name = re.sub(r'[^a-zA-Z]', '', name)
                         confidence = face_confidence(face_distances[best_match_index])
                         
                         if float(confidence.split('%')[0]) < 55:
